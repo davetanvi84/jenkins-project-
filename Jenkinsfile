@@ -38,12 +38,6 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
-            steps {
-                bat """
-                kubectl set image deployment/node-app node-app=%DOCKER_IMAGE%:%BUILD_NUMBER% --record
-                """
-            }
-        }
+
     }
 }
