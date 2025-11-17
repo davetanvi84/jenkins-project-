@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB = credentials('dockerhub-creds')
         DOCKER_IMAGE = "tansdave/node-app"
     }
 
@@ -34,10 +33,12 @@ pipeline {
 
         stage('Login & Push to Docker Hub') {
             steps {
-                bat """
-                echo %DOCKERHUB_PSW% | docker login -u %DOCKERHUB_USR% --password-stdin
-                docker push %DOCKER_IMAGE%:%BUILD_NUMBER%
-                """
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    bat """
+                    echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
+                    docker push %DOCKER_IMAGE%:%BUILD_NUMBER%
+                    """
+                }
             }
         }
 
